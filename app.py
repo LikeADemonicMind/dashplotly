@@ -31,7 +31,7 @@ app.layout = html.Div([
                 for stade in data['STADE DE DEVELOPPEMENT'].unique()
                 if pd.notna(stade)  # Supprimer les valeurs nulles
             ],
-            value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
+            value=data['STADE DE DEVELOPPEMENT'].iloc[1],  # Valeur par défaut
             multi=False,
             style={'width': '100%'}  # Largeur à 100%
         ),
@@ -44,6 +44,9 @@ app.layout = html.Div([
         dcc.Graph(id='genre-map', style={'width': '50vw', 'height': '50vw'}),
         dcc.Graph(id='libelle-francais-map', style={'width': '50vw', 'height': '50vw'})
     ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'}),
+    html.Div([
+        dcc.Graph(id='stade-development-map', style={'width': '50vw', 'height': '50vw'})
+    ], style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'height': '50vw'})
 ])
 
 # Définir la logique de callback pour mettre à jour les histogrammes et la carte en fonction des menus déroulants
@@ -57,9 +60,12 @@ def update_histograms(selected_domanialite, selected_stade):
     # Filtrer les données pour les histogrammes
     filtered_data = data[(data['DOMANIALITE'] == selected_domanialite) & (data['STADE DE DEVELOPPEMENT'] == selected_stade)]
 
-    # Histogrammes
-    fig_circonference = px.histogram(filtered_data, x='CIRCONFERENCE (cm)', title=f'Histogramme de la circonférence pour {selected_domanialite} - {selected_stade}', nbins=20)
-    fig_hauteur = px.histogram(filtered_data, x='HAUTEUR (m)', title=f'Histogramme de la hauteur pour {selected_domanialite} - {selected_stade}', nbins=20)
+    # Histogrammes avec contours
+    fig_circonference = px.histogram(filtered_data, x='CIRCONFERENCE (cm)', title=f'Histogramme de la circonférence pour {selected_domanialite} - {selected_stade}', nbins=20, barmode='overlay', histnorm='percent')
+    fig_circonference.update_traces(marker=dict(color='rgba(0, 0, 255, 0.5)', line=dict(color='rgba(0, 0, 0, 1)', width=1)))
+
+    fig_hauteur = px.histogram(filtered_data, x='HAUTEUR (m)', title=f'Histogramme de la hauteur pour {selected_domanialite} - {selected_stade}', nbins=20, barmode='overlay', histnorm='percent')
+    fig_hauteur.update_traces(marker=dict(color='rgba(0, 0, 255, 0.5)', line=dict(color='rgba(0, 0, 0, 1)', width=1)))
 
     return fig_circonference, fig_hauteur
 
@@ -94,6 +100,24 @@ def update_maps(selected_domanialite, selected_stade):
     )
 
     return fig_genre_map, fig_libelle_francais_map
+
+@app.callback(
+    Output('stade-development-map', 'figure'),
+    [Input('domanialite-dropdown', 'value')]
+)
+def update_stade_map(selected_domanialite):
+    # Carte Stade de Développement
+    fig_stade_map = px.scatter_mapbox(
+        data,
+        lat=data['geo_point_2d'].apply(lambda x: float(x.split(',')[0])),
+        lon=data['geo_point_2d'].apply(lambda x: float(x.split(',')[1])),
+        color='STADE DE DEVELOPPEMENT',
+        title=f'Carte des arbres par stade de développement',
+        mapbox_style="carto-positron",
+        zoom=10
+    )
+
+    return fig_stade_map
 
 # Lancer l'application
 if __name__ == '__main__':
