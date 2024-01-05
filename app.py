@@ -46,7 +46,24 @@ app.layout = html.Div([
     ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'}),
     html.Div([
         dcc.Graph(id='stade-development-map', style={'width': '50vw', 'height': '50vw'})
-    ], style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'height': '50vw'})
+    ], style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'height': '50vw'}),
+    html.Div([
+        dcc.Dropdown(
+            id='arrondissement-dropdown',
+            options=[
+                {'label': arrondissement, 'value': arrondissement}
+                for arrondissement in data['ARRONDISSEMENT'].unique()
+                if pd.notna(arrondissement)  # Supprimer les valeurs nulles
+            ],
+            value=data['ARRONDISSEMENT'].iloc[0],  # Valeur par défaut
+            multi=False,
+            style={'width': '100%'}  # Largeur à 100%
+        ),
+    ]),
+    # Placer la carte des arrondissements en bas
+    html.Div([
+        dcc.Graph(id='arrondissement-libelle-francais-map', style={'width': '100%', 'height': '50vw'})
+    ]),
 ])
 
 # Définir la logique de callback pour mettre à jour les histogrammes et la carte en fonction des menus déroulants
@@ -118,6 +135,28 @@ def update_stade_map(selected_domanialite):
     )
 
     return fig_stade_map
+
+@app.callback(
+    Output('arrondissement-libelle-francais-map', 'figure'),
+    [Input('arrondissement-dropdown', 'value')]
+)
+def update_arrondissement_libelle_francais_map(selected_arrondissement):
+    # Filtrer les données pour la carte
+    filtered_data = data[data['ARRONDISSEMENT'] == selected_arrondissement]
+
+    # Carte Libellé Français par Arrondissement
+    fig_arrondissement_libelle_francais_map = px.scatter_mapbox(
+        filtered_data,
+        lat=filtered_data['geo_point_2d'].apply(lambda x: float(x.split(',')[0])),
+        lon=filtered_data['geo_point_2d'].apply(lambda x: float(x.split(',')[1])),
+        color='LIBELLE FRANCAIS',
+        title=f'Carte des arbres par libellé français dans l\'arrondissement {selected_arrondissement}',
+        mapbox_style="carto-positron",
+        zoom=12,
+        height=600  # Ajuster la hauteur selon tes préférences
+    )
+
+    return fig_arrondissement_libelle_francais_map
 
 # Lancer l'application
 if __name__ == '__main__':
