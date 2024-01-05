@@ -21,7 +21,8 @@ app.layout = html.Div([
                 for domanialite in data['DOMANIALITE'].unique()
             ],
             value=data['DOMANIALITE'].iloc[0],  # Valeur par défaut
-            multi=False
+            multi=False,
+            style={'width': '100%'}  # Largeur à 100%
         ),
         dcc.Dropdown(
             id='stade-dropdown',
@@ -31,7 +32,8 @@ app.layout = html.Div([
                 if pd.notna(stade)  # Supprimer les valeurs nulles
             ],
             value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
-            multi=False
+            multi=False,
+            style={'width': '100%'}  # Largeur à 100%
         ),
     ], style={'display': 'flex', 'gap': '20px'}),  # Ajout de l'espace
     dcc.Graph(id='histogram-circonference'),
