@@ -13,27 +13,27 @@ app = dash.Dash(__name__)
 
 # Créer le layout de ton app
 app.layout = html.Div([
-    dcc.Dropdown(
-        id='domanialite-dropdown',
-        options=[
-            {'label': domanialite, 'value': domanialite}
-            for domanialite in data['DOMANIALITE'].unique()
-        ],
-        value=data['DOMANIALITE'].iloc[0],  # Valeur par défaut
-        multi=False,
-        style={'width': '50%'}
-    ),
-    dcc.Dropdown(
-        id='stade-dropdown',
-        options=[
-            {'label': stade, 'value': stade}
-            for stade in data['STADE DE DEVELOPPEMENT'].unique()
-            if pd.notna(stade)  # Supprimer les valeurs nulles
-        ],
-        value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
-        multi=False,
-        style={'width': '50%'}
-    ),
+    html.Div([
+        dcc.Dropdown(
+            id='domanialite-dropdown',
+            options=[
+                {'label': domanialite, 'value': domanialite}
+                for domanialite in data['DOMANIALITE'].unique()
+            ],
+            value=data['DOMANIALITE'].iloc[0],  # Valeur par défaut
+            multi=False
+        ),
+        dcc.Dropdown(
+            id='stade-dropdown',
+            options=[
+                {'label': stade, 'value': stade}
+                for stade in data['STADE DE DEVELOPPEMENT'].unique()
+                if pd.notna(stade)  # Supprimer les valeurs nulles
+            ],
+            value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
+            multi=False
+        ),
+    ], style={'display': 'flex'}),
     dcc.Graph(id='histogram-circonference'),
     dcc.Graph(id='histogram-hauteur')
 ])
