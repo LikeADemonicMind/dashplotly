@@ -79,10 +79,10 @@ def update_histograms(selected_domanialite, selected_stade):
 
     # Histogrammes avec contours
     fig_circonference = px.histogram(filtered_data, x='CIRCONFERENCE (cm)', title=f'Histogramme de la circonférence pour {selected_domanialite} - {selected_stade}', nbins=20, barmode='overlay', histnorm='percent')
-    fig_circonference.update_traces(marker=dict(color='rgba(0, 0, 255, 0.5)', line=dict(color='rgba(0, 0, 0, 1)', width=1)))
+    fig_circonference.update_traces(marker=dict(color='rgba(0, 128, 0, 0.75)', line=dict(color='rgba(0, 0, 0, 1)', width=1)))
 
     fig_hauteur = px.histogram(filtered_data, x='HAUTEUR (m)', title=f'Histogramme de la hauteur pour {selected_domanialite} - {selected_stade}', nbins=20, barmode='overlay', histnorm='percent')
-    fig_hauteur.update_traces(marker=dict(color='rgba(0, 0, 255, 0.5)', line=dict(color='rgba(0, 0, 0, 1)', width=1)))
+    fig_hauteur.update_traces(marker=dict(color='rgba(0, 128, 0, 0.75)', line=dict(color='rgba(0, 0, 0, 1)', width=1)))
 
     return fig_circonference, fig_hauteur
 
