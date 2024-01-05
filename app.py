@@ -33,7 +33,7 @@ app.layout = html.Div([
             value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
             multi=False
         ),
-    ], style={'display': 'flex'}),
+    ], style={'display': 'flex', 'gap': '20px'}),  # Ajout de l'espace
     dcc.Graph(id='histogram-circonference'),
     dcc.Graph(id='histogram-hauteur')
 ])
