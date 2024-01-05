@@ -37,9 +37,9 @@ app.layout = html.Div([
         ),
     ], style={'display': 'flex', 'gap': '20px'}),  # Ajout de l'espace
     html.Div([
-        dcc.Graph(id='histogram-circonference'),
-        dcc.Graph(id='histogram-hauteur')
-    ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'flexWrap': 'wrap'}),  # Côte à côte et saut de ligne si besoin
+        dcc.Graph(id='histogram-circonference', style={'width': '50vw', 'height': '50vw'}),
+        dcc.Graph(id='histogram-hauteur', style={'width': '50vw', 'height': '50vw'})
+    ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'})
 ])
 
 # Définir la logique de callback pour mettre à jour les histogrammes en fonction de la domanialité et du stade de développement sélectionnés
