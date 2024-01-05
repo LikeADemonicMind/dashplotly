@@ -28,6 +28,7 @@ app.layout = html.Div([
         options=[
             {'label': stade, 'value': stade}
             for stade in data['STADE DE DEVELOPPEMENT'].unique()
+            if pd.notna(stade)  # Supprimer les valeurs nulles
         ],
         value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
         multi=False,
