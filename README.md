@@ -1,0 +1,1 @@
+Small application for practicing dash/plotly usage. You can select the domain and the development stage of trees and view histograms of tree circumference and height. At the bottom of the page, you can find two maps representing the distribution of trees based on their gender.
