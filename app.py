@@ -39,10 +39,11 @@ app.layout = html.Div([
     html.Div([
         dcc.Graph(id='histogram-circonference', style={'width': '50vw', 'height': '50vw'}),
         dcc.Graph(id='histogram-hauteur', style={'width': '50vw', 'height': '50vw'})
-    ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'})
+    ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'}),
+    dcc.Graph(id='genre-map')
 ])
 
-# Définir la logique de callback pour mettre à jour les histogrammes en fonction de la domanialité et du stade de développement sélectionnés
+# Définir la logique de callback pour mettre à jour les histogrammes et la carte en fonction des menus déroulants
 @app.callback(
     [Output('histogram-circonference', 'figure'),
      Output('histogram-hauteur', 'figure')],
@@ -50,12 +51,34 @@ app.layout = html.Div([
      Input('stade-dropdown', 'value')]
 )
 def update_histograms(selected_domanialite, selected_stade):
+    # Filtrer les données pour les histogrammes
     filtered_data = data[(data['DOMANIALITE'] == selected_domanialite) & (data['STADE DE DEVELOPPEMENT'] == selected_stade)]
 
+    # Histogrammes
     fig_circonference = px.histogram(filtered_data, x='CIRCONFERENCE (cm)', title=f'Histogramme de la circonférence pour {selected_domanialite} - {selected_stade}', nbins=20)
     fig_hauteur = px.histogram(filtered_data, x='HAUTEUR (m)', title=f'Histogramme de la hauteur pour {selected_domanialite} - {selected_stade}', nbins=20)
 
     return fig_circonference, fig_hauteur
+
+# Définir la logique de callback pour mettre à jour la carte en fonction de tous les arbres
+@app.callback(
+    Output('genre-map', 'figure'),
+    [Input('domanialite-dropdown', 'value'),
+     Input('stade-dropdown', 'value')]
+)
+def update_map(selected_domanialite, selected_stade):
+    # Carte
+    fig_map = px.scatter_mapbox(
+        data,
+        lat=data['geo_point_2d'].apply(lambda x: float(x.split(',')[0])),
+        lon=data['geo_point_2d'].apply(lambda x: float(x.split(',')[1])),
+        color='GENRE',
+        title=f'Carte des arbres par genre',
+        mapbox_style="carto-positron",
+        zoom=10
+    )
+
+    return fig_map
 
 # Lancer l'application
 if __name__ == '__main__':
