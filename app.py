@@ -31,7 +31,7 @@ app.layout = html.Div([
                 for stade in data['STADE DE DEVELOPPEMENT'].unique()
                 if pd.notna(stade)  # Supprimer les valeurs nulles
             ],
-            value=data['STADE DE DEVELOPPEMENT'].iloc[1],  # Valeur par défaut
+            value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
             multi=False,
             style={'width': '100%'}  # Largeur à 100%
         ),
@@ -40,7 +40,10 @@ app.layout = html.Div([
         dcc.Graph(id='histogram-circonference', style={'width': '50vw', 'height': '50vw'}),
         dcc.Graph(id='histogram-hauteur', style={'width': '50vw', 'height': '50vw'})
     ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'}),
-    dcc.Graph(id='genre-map', style={'width': '50vw', 'height': '50vw'})
+    html.Div([
+        dcc.Graph(id='genre-map', style={'width': '50vw', 'height': '50vw'}),
+        dcc.Graph(id='libelle-francais-map', style={'width': '50vw', 'height': '50vw'})
+    ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'}),
 ])
 
 # Définir la logique de callback pour mettre à jour les histogrammes et la carte en fonction des menus déroulants
@@ -62,13 +65,14 @@ def update_histograms(selected_domanialite, selected_stade):
 
 # Définir la logique de callback pour mettre à jour la carte en fonction de tous les arbres
 @app.callback(
-    Output('genre-map', 'figure'),
+    [Output('genre-map', 'figure'),
+     Output('libelle-francais-map', 'figure')],
     [Input('domanialite-dropdown', 'value'),
      Input('stade-dropdown', 'value')]
 )
-def update_map(selected_domanialite, selected_stade):
-    # Carte
-    fig_map = px.scatter_mapbox(
+def update_maps(selected_domanialite, selected_stade):
+    # Carte Genre
+    fig_genre_map = px.scatter_mapbox(
         data,
         lat=data['geo_point_2d'].apply(lambda x: float(x.split(',')[0])),
         lon=data['geo_point_2d'].apply(lambda x: float(x.split(',')[1])),
@@ -78,7 +82,18 @@ def update_map(selected_domanialite, selected_stade):
         zoom=10
     )
 
-    return fig_map
+    # Carte Libellé Français
+    fig_libelle_francais_map = px.scatter_mapbox(
+        data,
+        lat=data['geo_point_2d'].apply(lambda x: float(x.split(',')[0])),
+        lon=data['geo_point_2d'].apply(lambda x: float(x.split(',')[1])),
+        color='LIBELLE FRANCAIS',
+        title=f'Carte des arbres par libellé français',
+        mapbox_style="carto-positron",
+        zoom=10
+    )
+
+    return fig_genre_map, fig_libelle_francais_map
 
 # Lancer l'application
 if __name__ == '__main__':
