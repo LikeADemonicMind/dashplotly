@@ -31,7 +31,7 @@ app.layout = html.Div([
                 for stade in data['STADE DE DEVELOPPEMENT'].unique()
                 if pd.notna(stade)  # Supprimer les valeurs nulles
             ],
-            value=data['STADE DE DEVELOPPEMENT'].iloc[0],  # Valeur par défaut
+            value=data['STADE DE DEVELOPPEMENT'].iloc[1],  # Valeur par défaut
             multi=False,
             style={'width': '100%'}  # Largeur à 100%
         ),
@@ -40,7 +40,7 @@ app.layout = html.Div([
         dcc.Graph(id='histogram-circonference', style={'width': '50vw', 'height': '50vw'}),
         dcc.Graph(id='histogram-hauteur', style={'width': '50vw', 'height': '50vw'})
     ], style={'display': 'flex', 'gap': '20px', 'flexDirection': 'row', 'width': '100%'}),
-    dcc.Graph(id='genre-map')
+    dcc.Graph(id='genre-map', style={'width': '50vw', 'height': '50vw'})
 ])
 
 # Définir la logique de callback pour mettre à jour les histogrammes et la carte en fonction des menus déroulants
